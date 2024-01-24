@@ -14,6 +14,8 @@ namespace FreccetteNuovo
         public int PartialScore { get; set; }
         public bool Ten {  get; set; }
         public bool X {  get; set; }
+        public int TenTotal { get; set; }
+        public int XTotal { get; set; }
 
         public int CalculatePartial()
         {

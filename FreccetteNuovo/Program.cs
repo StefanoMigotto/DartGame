@@ -1,6 +1,6 @@
 ﻿using Spectre.Console;
-using System.Text.Json;
 using Spectre.Console.Json;
+using System.Text.Json;
 
 namespace FreccetteNuovo
 {
@@ -69,8 +69,41 @@ namespace FreccetteNuovo
         public static void ContinueGame()
         {
             string filename = File.ReadAllText("save.dat");
-            var datasaved = JsonSerializer.Deserialize<Saved>(filename);
-            StartGame(true);
+            Saved datasaved = JsonSerializer.Deserialize<Saved>(filename);
+
+            var rule = new Rule("[green]Last Saved Data[/]");
+            AnsiConsole.Write(rule);
+            Table table = new Table();
+
+            table.AddColumn("*").Centered();
+            table.AddColumn("Arrow 1").Centered();
+            table.AddColumn("Arrow 2").Centered();
+            table.AddColumn("Arrow 3").Centered();
+            table.AddColumn("Prog.").Centered();
+            table.AddColumn("Tot.").Centered();
+            table.AddColumn("10").Centered();
+            table.AddColumn("X").Centered();
+
+            for (int i = 0; i < 11; i++)
+            {
+                table.AddRow(
+                    $"{i.ToString()}",
+                    datasaved.Archer.ArcherScore[i].Arrow1.ToString(),
+                    datasaved.Archer.ArcherScore[i].Arrow2.ToString(),
+                    datasaved.Archer.ArcherScore[i].Arrow3.ToString(),
+                    datasaved.Archer.ArcherScore[i].PartialScore.ToString(),
+                    datasaved.Archer.ArcherScore[i].CalculatePartial().ToString(),
+                    (datasaved.Archer.ArcherScore[i].Ten).ToString(),
+                    (datasaved.Archer.ArcherScore[i].X).ToString()
+                );
+            }
+            AnsiConsole.Write(table);
+
+            AnsiConsole.Markup("[yellow]Press any button for continue...[/]");
+            Console.ReadLine();
+
+            
+
         }
 
         /// <summary>
@@ -114,26 +147,53 @@ namespace FreccetteNuovo
                 var rule = new Rule("[green]Insert Data[/]");
                 AnsiConsole.Write(rule);
                 Score score = new Score();
-                score.Arrow1 = AnsiConsole.Ask<int>($"[yellow]{counterRace} - Insert the 1 arrow:[/] ");
-                if(score.Arrow1 > 9)
+                score.Arrow1 = AnsiConsole.Prompt(new TextPrompt<int>($"[yellow]{counterRace} - Insert the 1 arrow:[/] ").Validate(score =>
                 {
-                    CheckValueTen(score);
+                    return score switch
+                    {
+                        > 10 => ValidationResult.Error("[red]10 Is the max value.[/]"),
+                        _ => ValidationResult.Success()
+                    };
                 }
-                    
-                score.Arrow2 = AnsiConsole.Ask<int>($"[yellow]{counterRace} - Insert the 2 arrow:[/] ");
-                if (score.Arrow2 > 9)
+                ));
+                if(score.Arrow1  == 10)
                 {
                     CheckValueTen(score);
                 }
 
-                score.Arrow3 = AnsiConsole.Ask<int>($"[yellow]{counterRace} - Insert the 3 arrow:[/] ");
-                if (score.Arrow3 > 9)
+                score.Arrow2 = AnsiConsole.Prompt(new TextPrompt<int>($"[yellow]{counterRace} - Insert the 2 arrow:[/] ").Validate(score =>
+                {
+                    return score switch
+                    {
+                        > 10 => ValidationResult.Error("[red]10 Is the max value.[/]"),
+                        _ => ValidationResult.Success()
+                    };
+                }
+));
+                if (score.Arrow2 == 10)
+                {
+                    CheckValueTen(score);
+                }
+
+                score.Arrow3 = AnsiConsole.Prompt(new TextPrompt<int>($"[yellow]{counterRace} - Insert the 1 arrow:[/] ").Validate(score =>
+                {
+                    return score switch
+                    {
+                        > 10 => ValidationResult.Error("[red]10 Is the max value.[/]"),
+                        _ => ValidationResult.Success()
+                    };
+                }
+));
+                if (score.Arrow3 == 10)
                 {
                     CheckValueTen(score);
                 }
 
                 score.PartialScore = score.CalculatePartial();
                 save.Score = score;
+
+
+
                 counterRace++;
                 archer.ArcherScore.Add(score);
                 SaveFile(save);
@@ -160,7 +220,7 @@ namespace FreccetteNuovo
                         .PadRight(10)
                         .BorderColor(Color.Yellow));
 
-                string FileChoose = AnsiConsole.Prompt(new SelectionPrompt<string>().Title($"[yellow]How do you want continue?[/]").PageSize(5).AddChoices(new[] { $"[red]Delete the saved file.[/]", $"[yellow]Back to the menu[/]" }));
+                string FileChoose = AnsiConsole.Prompt(new SelectionPrompt<string>().Title($"[yellow]How do you want continue?[/]").PageSize(5).AddChoices(new[] { $"[yellow]Back to the menu[/]", $"[red]Delete the saved file.[/]" }));
                 if (FileChoose == "[red]Delete the saved file.[/]")
                 {
                     File.Delete(filename);
@@ -184,9 +244,17 @@ namespace FreccetteNuovo
         {
             string QuestionPoint = AnsiConsole.Prompt(new SelectionPrompt<string>().Title($"[yellow]How do you want catalogue this data?[/]").PageSize(5).AddChoices(new[] { $"[yellow]X[/]", $"[yellow]10[/]" }));
             if (QuestionPoint == "[yellow]X[/]")
+            {
                 score.X = true;
+                score.XTotal += 1;
+            }
+
             if (QuestionPoint == "[yellow]10[/]")
+            {
                 score.Ten = true;
+                score.TenTotal += 1;
+            }
+                
         }
 
         /// <summary>
@@ -197,6 +265,8 @@ namespace FreccetteNuovo
         /// <param name="archer"></param>
         public static void PrintResultOfGame(Saved save,Archer archer)
         {
+            var rule = new Rule("[yellow]Result Game[/]");
+            AnsiConsole.Write(rule);
             Table table = new Table();
             table.AddColumn("*").Centered();
             table.AddColumn("Arrow 1").Centered();
@@ -219,8 +289,8 @@ namespace FreccetteNuovo
                         archer.ArcherScore[i].Arrow3.ToString(),
                         (archer.ArcherScore[i].Arrow1 + archer.ArcherScore[i].Arrow2 + archer.ArcherScore[i].Arrow3).ToString(),
                         (archer.ArcherScore[i].Arrow1 + archer.ArcherScore[i].Arrow2 + archer.ArcherScore[i].Arrow3).ToString(),
-                        (archer.ArcherScore[i].Ten ? 'X' : '-').ToString(),
-                        (archer.ArcherScore[i].X ? 'X' : '-').ToString()
+                        (archer.ArcherScore[i].TenTotal).ToString(),
+                        (archer.ArcherScore[i].XTotal).ToString()
                     );
                 }
                 else
@@ -249,8 +319,8 @@ namespace FreccetteNuovo
                         archer.ArcherScore[i].Arrow3.ToString(),
                         (archer.ArcherScore[i].Arrow1 + archer.ArcherScore[i].Arrow2 + archer.ArcherScore[i].Arrow3).ToString(),
                         ListOfTotalIntegers[i].ToString(),
-                        (archer.ArcherScore[i].Ten ? 'X' : '-').ToString(),
-                        (archer.ArcherScore[i].X ? 'X' : '-').ToString()
+                        (archer.ArcherScore[i].TenTotal).ToString(),
+                        (archer.ArcherScore[i].XTotal).ToString()
                     );
                 }
             }
