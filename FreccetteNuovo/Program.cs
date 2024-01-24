@@ -33,9 +33,9 @@ namespace FreccetteNuovo
             bool exit = true;
             while (exit)
             {
-                var choose = AnsiConsole.Prompt(new SelectionPrompt<string>().Title($"Benvenuto, Come desideri procede?").PageSize(5).AddChoices(new[] { $"Nuova Partita", $"Carica il vecchio salvataggio", $"[yellow]Visualizza file di salvataggio[/]", $"[red]Esci[/]" }));
+                var choose = AnsiConsole.Prompt(new SelectionPrompt<string>().Title($"Welcome, Choose an option").PageSize(5).AddChoices(new[] { $"New Game", $"Load the last saved", $"[yellow]View the last saved[/]", $"[red]Quit[/]" }));
 
-                if (choose == "Carica il vecchio salvataggio")
+                if (choose == "Load the last saved")
                 {
                     if (File.Exists(filename))
                     {
@@ -43,21 +43,21 @@ namespace FreccetteNuovo
                     }
                     else
                     {
-                        AnsiConsole.Markup($"[red]ERRORE: [/][yellow]Non ci sono file di salvataggio trovati.[/]");
+                        AnsiConsole.Markup($"[red]ERRORE: [/][yellow]Don't exists saved file[/]");
                         Console.ReadLine();
                         Console.Clear();
                     }
                 }
-                else if (choose == "Nuova Partita")
+                else if (choose == "New Game")
                 {
                     File.Create(filename).Close();
                     StartGame(false);
 
-                }else if(choose == "[yellow]Visualizza file di salvataggio[/]")
+                }else if(choose == "[yellow]View the last saved[/]")
                 {
                     ViewSavedFile();
                 }
-                else if (choose == "[red]Esci[/]")
+                else if (choose == "[red]Quit[/]")
                 {
                     exit = false;
                 }
@@ -97,9 +97,11 @@ namespace FreccetteNuovo
 
             if (!mode)
             {
-                archer.NameOfArcher = AnsiConsole.Ask<string>("Inserisci il tuo nome:");
+                var rule = new Rule("[red]Basic Information[/]");
+                AnsiConsole.Write(rule);
+                archer.NameOfArcher = AnsiConsole.Ask<string>("Insert your name:");
                 save.Archer = archer;
-                society.NameOfSociety = AnsiConsole.Ask<string>("Inserisci il nome della tua società:");
+                society.NameOfSociety = AnsiConsole.Ask<string>("Insert the your club:");
                 archer.Society = society;
                 SaveFile(save);
             }
@@ -109,20 +111,22 @@ namespace FreccetteNuovo
             Console.Clear();
             for (int i = 0; i < 12; i++)
             {
+                var rule = new Rule("[green]Insert Data[/]");
+                AnsiConsole.Write(rule);
                 Score score = new Score();
-                score.Arrow1 = AnsiConsole.Ask<int>($"[yellow]{counterRace} - Inserisci il punteggio della 1 freccia:[/] ");
+                score.Arrow1 = AnsiConsole.Ask<int>($"[yellow]{counterRace} - Insert the 1 arrow:[/] ");
                 if(score.Arrow1 > 9)
                 {
                     CheckValueTen(score);
                 }
                     
-                score.Arrow2 = AnsiConsole.Ask<int>($"[yellow]{counterRace} - Inserisci il punteggio della 2 freccia:[/] ");
+                score.Arrow2 = AnsiConsole.Ask<int>($"[yellow]{counterRace} - Insert the 2 arrow:[/] ");
                 if (score.Arrow2 > 9)
                 {
                     CheckValueTen(score);
                 }
 
-                score.Arrow3 = AnsiConsole.Ask<int>($"[yellow]{counterRace} - Inserisci il punteggio della 3 freccia:[/] ");
+                score.Arrow3 = AnsiConsole.Ask<int>($"[yellow]{counterRace} - Insert the 3 arrow:[/] ");
                 if (score.Arrow3 > 9)
                 {
                     CheckValueTen(score);
@@ -156,15 +160,17 @@ namespace FreccetteNuovo
                         .PadRight(10)
                         .BorderColor(Color.Yellow));
 
-                string FileChoose = AnsiConsole.Prompt(new SelectionPrompt<string>().Title($"[yellow]Come vuoi continuare?[/]").PageSize(5).AddChoices(new[] { $"[yellow]Cancella il salvataggio[/]", $"[yellow]Continua e torna al menu[/]" }));
-                if (FileChoose == "[yellow]Cancella il salvataggio[/]")
+                string FileChoose = AnsiConsole.Prompt(new SelectionPrompt<string>().Title($"[yellow]How do you want continue?[/]").PageSize(5).AddChoices(new[] { $"[red]Delete the saved file.[/]", $"[yellow]Back to the menu[/]" }));
+                if (FileChoose == "[red]Delete the saved file.[/]")
                 {
                     File.Delete(filename);
+                    AnsiConsole.Markup("[green]File deleted successfully! Press any key for continue...[/]");
+                    Console.ReadLine();
                 }
             }
             else
             {
-                AnsiConsole.Markup("[red]Non ci sono file di configurazione.[/]");
+                AnsiConsole.Markup("[red]The saved file not exist, press any key for continue...[/]");
                 Console.ReadLine();
                 
             }
@@ -176,7 +182,7 @@ namespace FreccetteNuovo
         /// <param name="score"></param>
         public static void CheckValueTen(Score score)
         {
-            string QuestionPoint = AnsiConsole.Prompt(new SelectionPrompt<string>().Title($"[yellow]Come vuoi catalogare questo dato?[/]").PageSize(5).AddChoices(new[] { $"[yellow]X[/]", $"[yellow]10[/]" }));
+            string QuestionPoint = AnsiConsole.Prompt(new SelectionPrompt<string>().Title($"[yellow]How do you want catalogue this data?[/]").PageSize(5).AddChoices(new[] { $"[yellow]X[/]", $"[yellow]10[/]" }));
             if (QuestionPoint == "[yellow]X[/]")
                 score.X = true;
             if (QuestionPoint == "[yellow]10[/]")
