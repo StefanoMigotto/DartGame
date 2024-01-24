@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreccetteNuovo", "FreccetteNuovo\FreccetteNuovo.csproj", "{D9B1A9D6-D15E-4B62-B197-A1F7FA52A308}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D9B1A9D6-D15E-4B62-B197-A1F7FA52A308}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9B1A9D6-D15E-4B62-B197-A1F7FA52A308}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9B1A9D6-D15E-4B62-B197-A1F7FA52A308}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9B1A9D6-D15E-4B62-B197-A1F7FA52A308}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BE072BC0-D085-4896-A2A1-32948EED352E}
+	EndGlobalSection
+EndGlobal
