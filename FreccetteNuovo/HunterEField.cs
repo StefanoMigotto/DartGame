@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace FreccetteNuovo
 {
-    internal class Program
+    internal class HunterEField : Score
     {
-        static void Main(string[] args)
-        {
-
-        }
+        public int TotalOfTurn = 24;
     }
 }
